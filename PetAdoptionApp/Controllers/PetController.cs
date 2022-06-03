@@ -44,7 +44,7 @@ namespace PetAdoptionApp.Controllers
 
         // GET: PetApi/Pet/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PetViewModel>> GetPet(int id)
+        public async Task<ActionResult<Pet>> GetPet(int id)
         {
             var pet = await _petService.GetById(id);
 
@@ -53,8 +53,8 @@ namespace PetAdoptionApp.Controllers
                 return NotFound();
             }
 
-            var petDTO = _mapper.Map<PetViewModel>(pet);
-            return petDTO;
+            //var petDTO = _mapper.Map<PetViewModel>(pet);
+            return pet;
         }
 
         // POST: PetApi/User

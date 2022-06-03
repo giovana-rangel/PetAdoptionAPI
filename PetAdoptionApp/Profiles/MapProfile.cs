@@ -29,7 +29,7 @@ namespace PetAdoptionApp.Profiles
                .ForMember(x => x.Sex, opt => opt.MapFrom(o => o.Sex))
                .ForMember(x => x.Age, opt => opt.MapFrom(o => o.Age))
                .ForMember(x => x.PetWeight, opt => opt.MapFrom(o => o.PetWeight))
-               .ForMember(x => x.Color, opt => opt.MapFrom(o => o.Color))  
+               .ForMember(x => x.Is_adopted, opt => opt.MapFrom(o => o.IsAdopted))
                .ForMember(x => x.Username, opt => opt.MapFrom(o => o.UserIdFkNavigation.Username))
                .ForMember(x => x.UserId, opt => opt.MapFrom(o => o.UserIdFkNavigation))
                .ForMember(x => x.Location, opt => opt.MapFrom(o => o.LocationIdFkNavigation))

@@ -48,7 +48,7 @@ namespace PetAdoptionApp.Controllers
             _context.Vacines.Add(vacine);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWebsiteLink", new { id = vacine.Id }, vacine);
+            return CreatedAtAction("GetVacine", new { id = vacine.Id }, vacine);
 
         }
 

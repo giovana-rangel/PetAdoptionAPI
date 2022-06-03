@@ -9,7 +9,7 @@ namespace PetAdoptionApp.Models.DTO
     {
         public virtual int Id { get; set; }
         public virtual string PetName { get; set; }
-        public virtual string Sex { get; set; }
+        public virtual bool Sex { get; set; }
         public virtual string PetType { get; set; }
         public virtual LocationAddress Location { get; set; }
     }

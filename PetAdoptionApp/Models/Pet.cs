@@ -18,10 +18,10 @@ namespace PetAdoptionApp.Models
         public string PetName { get; set; }
         public string Bio { get; set; }
         public string Breed { get; set; }
-        public string Sex { get; set; }
-        public int? Age { get; set; }
+        public decimal? Sex { get; set; }
+        public double? Age { get; set; }
         public double? PetWeight { get; set; }
-        public string Color { get; set; }
+        public decimal? IsAdopted { get; set; }
         public int? PetTypeIdFk { get; set; }
         public int? UserIdFk { get; set; }
         public int? ImageIdFk { get; set; }

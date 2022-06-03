@@ -48,7 +48,7 @@ namespace PetAdoptionApp.Controllers
             _context.FavPets.Add(favpet);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWebsiteLink", new { id = favpet.Id }, favpet);
+            return CreatedAtAction("GetFavPet", new { id = favpet.Id }, favpet);
         }
 
         // PUT PetApi/UserClientRole/5

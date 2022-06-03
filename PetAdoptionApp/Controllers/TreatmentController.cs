@@ -20,14 +20,14 @@ namespace PetAdoptionApp.Controllers
             _context = context;
         }
 
-        // GET: PetApi/UserClientRole
+        // GET: PetApi/Treatment
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Treatment>>> GetTreatment()
         {
             return await _context.Treatments.ToListAsync();
         }
 
-        // GET PetApi/UserClientRole/5
+        // GET PetApi/Treatment5
         [HttpGet("{id}")]
         public async Task<ActionResult<Treatment>> GetTreatment(int id)
         {
@@ -41,18 +41,18 @@ namespace PetAdoptionApp.Controllers
             return treatment;
         }
 
-        // POST PetApi/UserClientRole
+        // POST PetApi/Treatment
         [HttpPost]
         public async Task<ActionResult<Treatment>> PostTreatment(Treatment treatment)
         {
             _context.Treatments.Add(treatment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWebsiteLink", new { id = treatment.Id }, treatment);
+            return CreatedAtAction("GetTreatment", new { id = treatment.Id }, treatment);
 
         }
 
-        // PUT PetApi/UserClientRole/5
+        // PUT PetApi/Treatment/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTreatment(int id, Treatment treatment)
         {
@@ -80,7 +80,7 @@ namespace PetAdoptionApp.Controllers
             return NoContent();
         }
 
-        // DELETE PetApi/UserClientRole/5
+        // DELETE PetApi/Treatment/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTreatment(int id)
         {
