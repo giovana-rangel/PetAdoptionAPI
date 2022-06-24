@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetAdoptionApp.Models;
 using System;
@@ -6,62 +7,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace PetAdoptionApp.Controllers
 {
     [Route("PetApi/[controller]")]
     [ApiController]
-    public class VacineController : ControllerBase
+    public class ColorController : ControllerBase
     {
         private readonly PetAdoptionAppContext _context;
-        public VacineController(PetAdoptionAppContext context)
+        public ColorController(PetAdoptionAppContext context)
         {
             _context = context;
         }
 
         // GET: PetApi/UserClientRole
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vacine>>> GetVacines()
+        public async Task<ActionResult<IEnumerable<Color>>> GetColors()
         {
-            return await _context.Vacines.ToListAsync();
+            return await _context.Colors.ToListAsync();
         }
 
         // GET PetApi/UserClientRole/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<Vacine>>> GetVacine(int id)
+        public async Task<ActionResult<Color>> GetColor(int id)
         {
-            var vacines = new List<Vacine>();
-            vacines = await _context.Vacines.Where(v => v.PetIdFk == id).ToListAsync<Vacine>();
+            var colors = await _context.Colors.FindAsync(id);
 
-            if (vacines == null)
+            if (colors == null)
             {
                 return NotFound();
             }
 
-            return vacines;
+            return colors;
         }
 
         // POST PetApi/UserClientRole
         [HttpPost]
-        public async Task<ActionResult<Vacine>> PostVacines(Vacine vacine)
+        public async Task<ActionResult<Color>> PostColor(Color color)
         {
-            _context.Vacines.Add(vacine);
+            _context.Colors.Add(color);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVacine", new { id = vacine.Id }, vacine);
+            return CreatedAtAction("GetColor", new { id = color.Id }, color);
 
         }
 
         // PUT PetApi/UserClientRole/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVacines(int id, Vacine vacine)
+        public async Task<IActionResult> PutColor(int id, Color color)
         {
-            if (id != vacine.Id)
+            if (id != color.Id)
             {
                 return BadRequest();
             }
-            _context.Entry(vacine).State = EntityState.Modified;
+            _context.Entry(color).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +67,7 @@ namespace PetAdoptionApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VacineExists(id))
+                if (!ColorExists(id))
                 {
                     return NotFound();
                 }
@@ -83,15 +81,15 @@ namespace PetAdoptionApp.Controllers
 
         // DELETE PetApi/UserClientRole/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteVacines(int id)
+        public async Task<IActionResult> DeleteColor(int id)
         {
-            var vacine = await _context.Vacines.FindAsync(id);
-            if (vacine == null)
+            var color = await _context.Colors.FindAsync(id);
+            if (color == null)
             {
                 return NotFound();
             }
 
-            _context.Vacines.Remove(vacine);
+            _context.Colors.Remove(color);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -99,9 +97,9 @@ namespace PetAdoptionApp.Controllers
 
 
         //useful methods
-        private bool VacineExists(int id)
+        private bool ColorExists(int id)
         {
-            return _context.Vacines.Any(e => e.Id == id);
+            return _context.Colors.Any(e => e.Id == id);
         }
     }
 }

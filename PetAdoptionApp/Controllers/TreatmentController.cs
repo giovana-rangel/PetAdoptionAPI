@@ -29,16 +29,17 @@ namespace PetAdoptionApp.Controllers
 
         // GET PetApi/Treatment5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Treatment>> GetTreatment(int id)
+        public ActionResult<List<Treatment>> GetTreatment(int id)
         {
-            var treatment = await _context.Treatments.FindAsync(id);
+            var treatments = new List<Treatment>();
+            treatments = _context.Treatments.Where(t => t.PetIdFk == id).ToList<Treatment>();
 
-            if (treatment == null)
+            if (treatments == null)
             {
                 return NotFound();
             }
 
-            return treatment;
+            return treatments;
         }
 
         // POST PetApi/Treatment

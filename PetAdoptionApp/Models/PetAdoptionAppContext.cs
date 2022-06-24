@@ -17,6 +17,8 @@ namespace PetAdoptionApp.Models
         {
         }
 
+        public virtual DbSet<Breed> Breeds { get; set; }
+        public virtual DbSet<Color> Colors { get; set; }
         public virtual DbSet<FavPet> FavPets { get; set; }
         public virtual DbSet<LocationAddress> LocationAddresses { get; set; }
         public virtual DbSet<Pet> Pets { get; set; }
@@ -32,12 +34,40 @@ namespace PetAdoptionApp.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=(Local);Database=PetAdoptionApp;Trusted_Connection=True;MultipleActiveResultSets=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Breed>(entity =>
+            {
+                entity.ToTable("Breed");
+
+                entity.Property(e => e.Breed1)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("Breed");
+
+                entity.Property(e => e.PetTypeIdFk).HasColumnName("PetTypeId_FK");
+
+                entity.HasOne(d => d.PetTypeIdFkNavigation)
+                    .WithMany(p => p.Breeds)
+                    .HasForeignKey(d => d.PetTypeIdFk)
+                    .HasConstraintName("FK__Breed__PetTypeId__37FA4C37");
+            });
+
+            modelBuilder.Entity<Color>(entity =>
+            {
+                entity.ToTable("Color");
+
+                entity.Property(e => e.Color1)
+                    .HasMaxLength(75)
+                    .IsUnicode(false)
+                    .HasColumnName("Color");
+            });
+
             modelBuilder.Entity<FavPet>(entity =>
             {
                 entity.ToTable("FavPet");
@@ -49,12 +79,12 @@ namespace PetAdoptionApp.Models
                 entity.HasOne(d => d.PetIdFkNavigation)
                     .WithMany(p => p.FavPets)
                     .HasForeignKey(d => d.PetIdFk)
-                    .HasConstraintName("FK__FavPet__PetId_FK__6DCC4D03");
+                    .HasConstraintName("FK__FavPet__PetId_FK__4CF5691D");
 
                 entity.HasOne(d => d.UserIdFkNavigation)
                     .WithMany(p => p.FavPets)
                     .HasForeignKey(d => d.UserIdFk)
-                    .HasConstraintName("FK__FavPet__UserId_F__6CD828CA");
+                    .HasConstraintName("FK__FavPet__UserId_F__4C0144E4");
             });
 
             modelBuilder.Entity<LocationAddress>(entity =>
@@ -82,13 +112,17 @@ namespace PetAdoptionApp.Models
             {
                 entity.ToTable("Pet");
 
+                entity.Property(e => e.Age)
+                    .HasColumnType("numeric(1, 0)")
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.Bio)
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Breed)
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                entity.Property(e => e.BreedIdFk).HasColumnName("BreedId_FK");
+
+                entity.Property(e => e.ColorIdFk).HasColumnName("ColorId_FK");
 
                 entity.Property(e => e.ImageIdFk).HasColumnName("ImageId_FK");
 
@@ -104,7 +138,7 @@ namespace PetAdoptionApp.Models
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.PetTypeIdFk).HasColumnName("PetTypeID_FK");
+                entity.Property(e => e.PetTypeIdFk).HasColumnName("PetTypeId_FK");
 
                 entity.Property(e => e.Sex)
                     .HasColumnType("numeric(1, 0)")
@@ -117,25 +151,35 @@ namespace PetAdoptionApp.Models
 
                 entity.Property(e => e.UserIdFk).HasColumnName("UserId_FK");
 
+                entity.HasOne(d => d.BreedIdFkNavigation)
+                    .WithMany(p => p.Pets)
+                    .HasForeignKey(d => d.BreedIdFk)
+                    .HasConstraintName("FK__Pet__BreedId_FK__3F9B6DFF");
+
+                entity.HasOne(d => d.ColorIdFkNavigation)
+                    .WithMany(p => p.Pets)
+                    .HasForeignKey(d => d.ColorIdFk)
+                    .HasConstraintName("FK__Pet__ColorId_FK__3EA749C6");
+
                 entity.HasOne(d => d.ImageIdFkNavigation)
                     .WithMany(p => p.Pets)
                     .HasForeignKey(d => d.ImageIdFk)
-                    .HasConstraintName("FK__Pet__ImageId_FK__625A9A57");
+                    .HasConstraintName("FK__Pet__ImageId_FK__4183B671");
 
                 entity.HasOne(d => d.LocationIdFkNavigation)
                     .WithMany(p => p.Pets)
                     .HasForeignKey(d => d.LocationIdFk)
-                    .HasConstraintName("FK__Pet__LocationId___634EBE90");
+                    .HasConstraintName("FK__Pet__LocationId___4277DAAA");
 
                 entity.HasOne(d => d.PetTypeIdFkNavigation)
                     .WithMany(p => p.Pets)
                     .HasForeignKey(d => d.PetTypeIdFk)
-                    .HasConstraintName("FK__Pet__PetTypeID_F__6166761E");
+                    .HasConstraintName("FK__Pet__PetTypeId_F__3DB3258D");
 
                 entity.HasOne(d => d.UserIdFkNavigation)
                     .WithMany(p => p.Pets)
                     .HasForeignKey(d => d.UserIdFk)
-                    .HasConstraintName("FK__Pet__UserId_FK__607251E5");
+                    .HasConstraintName("FK__Pet__UserId_FK__408F9238");
             });
 
             modelBuilder.Entity<PetType>(entity =>
@@ -181,14 +225,14 @@ namespace PetAdoptionApp.Models
                 entity.HasOne(d => d.PetIdFkNavigation)
                     .WithMany(p => p.Treatments)
                     .HasForeignKey(d => d.PetIdFk)
-                    .HasConstraintName("FK__Treatment__PetId__69FBBC1F");
+                    .HasConstraintName("FK__Treatment__PetId__4924D839");
             });
 
             modelBuilder.Entity<UserClient>(entity =>
             {
                 entity.ToTable("UserClient");
 
-                entity.HasIndex(e => e.Email, "UQ__UserClie__A9D10534DEDEA871")
+                entity.HasIndex(e => e.Email, "UQ__UserClie__A9D105348FC892A2")
                     .IsUnique();
 
                 entity.Property(e => e.Bio)
@@ -235,17 +279,17 @@ namespace PetAdoptionApp.Models
                 entity.HasOne(d => d.ImageIdFkNavigation)
                     .WithMany(p => p.UserClients)
                     .HasForeignKey(d => d.ImageIdFk)
-                    .HasConstraintName("FK__UserClien__Image__55F4C372");
+                    .HasConstraintName("FK__UserClien__Image__2D7CBDC4");
 
                 entity.HasOne(d => d.LocationIdFkNavigation)
                     .WithMany(p => p.UserClients)
                     .HasForeignKey(d => d.LocationIdFk)
-                    .HasConstraintName("FK__UserClien__Locat__55009F39");
+                    .HasConstraintName("FK__UserClien__Locat__2C88998B");
 
                 entity.HasOne(d => d.RollIdFkNavigation)
                     .WithMany(p => p.UserClients)
                     .HasForeignKey(d => d.RollIdFk)
-                    .HasConstraintName("FK__UserClien__RollI__540C7B00");
+                    .HasConstraintName("FK__UserClien__RollI__2B947552");
             });
 
             modelBuilder.Entity<Vacine>(entity =>
@@ -267,7 +311,7 @@ namespace PetAdoptionApp.Models
                 entity.HasOne(d => d.PetIdFkNavigation)
                     .WithMany(p => p.Vacines)
                     .HasForeignKey(d => d.PetIdFk)
-                    .HasConstraintName("FK__Vacine__PetId_FK__671F4F74");
+                    .HasConstraintName("FK__Vacine__PetId_FK__46486B8E");
             });
 
             modelBuilder.Entity<WebsiteLink>(entity =>
@@ -283,7 +327,7 @@ namespace PetAdoptionApp.Models
                 entity.HasOne(d => d.UserIdFkNavigation)
                     .WithMany(p => p.WebsiteLinks)
                     .HasForeignKey(d => d.UserIdFk)
-                    .HasConstraintName("FK__WebsiteLi__UserI__59C55456");
+                    .HasConstraintName("FK__WebsiteLi__UserI__314D4EA8");
             });
 
             OnModelCreatingPartial(modelBuilder);

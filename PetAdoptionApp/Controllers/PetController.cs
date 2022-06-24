@@ -33,18 +33,18 @@ namespace PetAdoptionApp.Controllers
             _petService = petService;
         }
 
-        // GET: PetApi/Pet
+        // GET ALL: PetApi/Pet
         [HttpGet]
-        public async Task<IEnumerable<PetLiteViewModel>> GetPets()
+        public async Task<IEnumerable<PetViewModel>> GetPets()
         {
             var pets = await _petService.GetAll();
-            var petLiteDTO = _mapper.Map<IEnumerable<PetLiteViewModel>>(pets);
-            return petLiteDTO;
+            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets);
+            return petDTO;
         }
 
         // GET: PetApi/Pet/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Pet>> GetPet(int id)
+        public async Task<ActionResult<PetViewModel>> GetPet(int id)
         {
             var pet = await _petService.GetById(id);
 
@@ -53,8 +53,54 @@ namespace PetAdoptionApp.Controllers
                 return NotFound();
             }
 
-            //var petDTO = _mapper.Map<PetViewModel>(pet);
-            return pet;
+            var petViewModel = _mapper.Map<PetViewModel>(pet);
+            return petViewModel;
+        }
+
+        //GET BY RAZA (BREED)
+        [HttpGet("search")]
+        public async Task<IEnumerable<PetViewModel>> GetPets([FromQuery]string value)
+        {
+            var pets = await _petService.GetAll();
+
+            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Breed.ToLower().Contains(value));
+            return petDTO;
+        }
+
+        //GET BY COLOR
+        [HttpGet("color")]
+        public async Task<IEnumerable<PetViewModel>> GetPetsByColor([FromQuery] int value)
+        {
+            var pets = await _petService.GetAll();
+
+            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Color == value);
+            return petDTO;
+        }
+
+        //GET BY SEX (FEM/MASC)
+        [HttpGet("sex")]
+        public async Task<IEnumerable<PetViewModel>> GetPetsBySex([FromQuery] bool value)
+        {
+            var pets = await _petService.GetAll();
+            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Sex == value);
+            return petDTO;
+        }
+
+        //Get Mascotas creadas por mes
+        [HttpGet("date")]
+        public async Task<List<int>> GetPetsByDate()
+        {
+            List<int> counts = new List<int>();
+            var pets = await _petService.GetAll();
+            var petDates = _mapper.Map<IEnumerable<PetDates>>(pets);
+            
+            for(int i = 1; i<13; i++)
+            {
+                int value = petDates.Count( p => p.petCreation.Month == i && p.petCreation.Year == DateTime.Now.Year) ;
+                counts.Add(value);
+            }
+
+            return counts;
         }
 
         // POST: PetApi/User

@@ -39,6 +39,8 @@ namespace PetAdoptionApp.Services
         public async Task<IEnumerable<Pet>> GetAll()
         {
             return await _context.Pets
+                .Include(u => u.ColorIdFkNavigation)
+                .Include(u => u.BreedIdFkNavigation)
                 .Include(u => u.ImageIdFkNavigation)
                 .Include(u => u.LocationIdFkNavigation)
                 .Include(u => u.PetTypeIdFkNavigation)
@@ -49,10 +51,12 @@ namespace PetAdoptionApp.Services
         public async Task<Pet> GetById(int petId)
         {
             return await _context.Pets
-                .Include(p => p.ImageIdFkNavigation)
-                .Include(p => p.LocationIdFkNavigation)
-                .Include(p => p.PetTypeIdFkNavigation)
-                .Include(p => p.UserIdFkNavigation)
+                .Include(u => u.ColorIdFkNavigation)
+                .Include(u => u.BreedIdFkNavigation)
+                .Include(u => u.ImageIdFkNavigation)
+                .Include(u => u.LocationIdFkNavigation)
+                .Include(u => u.PetTypeIdFkNavigation)
+                .Include(u => u.UserIdFkNavigation)
                 .SingleOrDefaultAsync(p => p.Id == petId);
         }
 

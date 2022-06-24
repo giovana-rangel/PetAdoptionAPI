@@ -17,17 +17,20 @@ namespace PetAdoptionApp.Models
         public int Id { get; set; }
         public string PetName { get; set; }
         public string Bio { get; set; }
-        public string Breed { get; set; }
         public decimal? Sex { get; set; }
-        public double? Age { get; set; }
+        public decimal? Age { get; set; }
         public double? PetWeight { get; set; }
         public decimal? IsAdopted { get; set; }
         public int? PetTypeIdFk { get; set; }
+        public int? ColorIdFk { get; set; }
+        public int? BreedIdFk { get; set; }
         public int? UserIdFk { get; set; }
         public int? ImageIdFk { get; set; }
         public int? LocationIdFk { get; set; }
         public DateTime? Timestamps { get; set; }
 
+        public virtual Breed BreedIdFkNavigation { get; set; }
+        public virtual Color ColorIdFkNavigation { get; set; }
         public virtual Picture ImageIdFkNavigation { get; set; }
         public virtual LocationAddress LocationIdFkNavigation { get; set; }
         public virtual PetType PetTypeIdFkNavigation { get; set; }

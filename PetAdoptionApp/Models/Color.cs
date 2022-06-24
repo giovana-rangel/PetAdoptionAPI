@@ -5,18 +5,16 @@ using System.Collections.Generic;
 
 namespace PetAdoptionApp.Models
 {
-    public partial class PetType
+    public partial class Color
     {
-        public PetType()
+        public Color()
         {
-            Breeds = new HashSet<Breed>();
             Pets = new HashSet<Pet>();
         }
 
         public int Id { get; set; }
-        public string PetType1 { get; set; }
+        public string Color1 { get; set; }
 
-        public virtual ICollection<Breed> Breeds { get; set; }
         public virtual ICollection<Pet> Pets { get; set; }
     }
 }
