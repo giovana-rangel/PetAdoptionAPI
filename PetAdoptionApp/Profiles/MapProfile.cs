@@ -43,6 +43,12 @@ namespace PetAdoptionApp.Profiles
             CreateMap<Pet, PetDates>()
                 .ForMember(x => x.Id, opt => opt.MapFrom(o => o.Id))
                 .ForMember(x => x.petCreation, opt => opt.MapFrom(o => o.Timestamps));
+
+            CreateMap<Pet, PetTreatments>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(o => o.Id))
+                .ForMember(x => x.PetName, opt => opt.MapFrom(o => o.PetName))
+                .ForMember(x => x.PetType, opt => opt.MapFrom(o => o.PetTypeIdFk))
+                .ForMember(x => x.UserIdFk, opt => opt.MapFrom(o => o.UserIdFk));
         }
     }
 }

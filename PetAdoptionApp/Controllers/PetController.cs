@@ -33,7 +33,7 @@ namespace PetAdoptionApp.Controllers
             _petService = petService;
         }
 
-        // GET ALL: PetApi/Pet
+        // GET ALL
         [HttpGet]
         public async Task<IEnumerable<PetViewModel>> GetPets()
         {
@@ -42,7 +42,41 @@ namespace PetAdoptionApp.Controllers
             return petDTO;
         }
 
-        // GET: PetApi/Pet/5
+        //GET ALL WITH LIMIT EXTENSION
+        [HttpGet("limit")]
+        public async Task<IEnumerable<PetViewModel>> GetSomePets([FromQuery] int value)
+        {
+            var pets = await _petService.GetAll();
+            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Take(value);
+            return petDTO;
+        }
+
+        //GET ALL TREATMENTS AND VACINES BY PET
+        [HttpGet("healthData")]
+        public async Task<List<PetTreatments>> GetPetsTreatments()
+        {
+            var pets = await _petService.GetAll();
+            var treatments = await _context.Treatments.ToListAsync();
+            var vacines = await _context.Vacines.ToListAsync();
+            List<PetTreatments> petTreatments = new List<PetTreatments>();
+
+            foreach(Pet p in pets)
+            {
+                PetTreatments petTreatment = new PetTreatments();
+                petTreatment.Id = p.Id;
+                petTreatment.PetName = p.PetName;
+                petTreatment.PetType = p.PetTypeIdFk;
+                petTreatment.UserIdFk = p.UserIdFk;
+                var treatment = treatments.Where(x => x.PetIdFk == p.Id).Select(x => x.TreatmentLabel).ToList();
+                var vacine = vacines.Where(x => x.PetIdFk == p.Id).Select(x => x.VacineLabel).ToList();
+                petTreatment.Treatments = treatment;
+                petTreatment.Vacines = vacine;
+                petTreatments.Add(petTreatment);
+            }
+            return petTreatments;
+        }
+
+        // GET PET BY ID
         [HttpGet("{id}")]
         public async Task<ActionResult<PetViewModel>> GetPet(int id)
         {

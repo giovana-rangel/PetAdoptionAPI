@@ -20,28 +20,37 @@ namespace PetAdoptionApp.Controllers
             _context = context;
         }
 
-        // GET: PetApi/UserClientRole
+        // GET ALL FAV PETS BY USER
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FavPet>>> GetFavPets()
         {
             return await _context.FavPets.ToListAsync();
         }
 
-        // GET PetApi/UserClientRole/5
+        // GET FAVPET BY USER ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<FavPet>> GetFavPet(int id)
+        public async Task<ActionResult<List<FavPet>>> GetFavPet(int id)
         {
-            var favpet = await _context.FavPets.FindAsync(id);
+            var favpets = await _context.FavPets.Where( x => x.UserIdFk == id).ToListAsync();
 
-            if (favpet == null)
+            if (favpets == null)
             {
                 return NotFound();
             }
 
-            return favpet;
+            return favpets;
         }
 
-        // POST PetApi/UserClientRole
+        //COUNTER LIKES BY PET ID
+        [HttpGet("favPetId")]
+        public async Task<int> CountLikesByPet([FromQuery] int favPetId)
+        {
+            var likes = await _context.FavPets.Where(x => x.PetIdFk == favPetId).ToListAsync();
+            int counts = likes.Count();
+            return counts;
+        }
+
+        // POST 
         [HttpPost]
         public async Task<ActionResult<FavPet>> PostFavPet(FavPet favpet)
         {
@@ -51,7 +60,7 @@ namespace PetAdoptionApp.Controllers
             return CreatedAtAction("GetFavPet", new { id = favpet.Id }, favpet);
         }
 
-        // PUT PetApi/UserClientRole/5
+        // PUT 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFavPet(int id, FavPet favpet)
         {

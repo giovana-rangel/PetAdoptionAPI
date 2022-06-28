@@ -11,7 +11,6 @@ namespace PetAdoptionApp.Models
         public string TreatmentLabel { get; set; }
         public DateTime? AplicationDate { get; set; }
         public int? PetIdFk { get; set; }
-
         public virtual Pet PetIdFkNavigation { get; set; }
     }
 }
