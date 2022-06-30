@@ -95,7 +95,7 @@ namespace PetAdoptionApp.Controllers
 
             var petViewModel = _mapper.Map<PetViewModel>(pet);
             return petViewModel;
-        }
+        }    
 
         //GET PET BY RAZA (BREED)
         [HttpGet("search")]
