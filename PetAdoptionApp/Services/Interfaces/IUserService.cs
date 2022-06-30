@@ -10,7 +10,7 @@ namespace PetAdoptionApp.Services.Interfaces
 {
     public interface IUserService 
     {
-        IEnumerable<UserClient> GetAll();
+        Task<IEnumerable<UserClient>> GetAll();
         Task<UserClient> GetUserById(int userId);
         Task<UserClient> CreateNewUser(UserClient user);
         UserClient UpdateUser(int userId, UserClient user);

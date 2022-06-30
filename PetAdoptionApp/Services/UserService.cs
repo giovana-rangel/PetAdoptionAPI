@@ -40,13 +40,13 @@ namespace PetAdoptionApp.Services
         }
         
 
-        public IEnumerable<UserClient> GetAll()
+        public async Task<IEnumerable<UserClient>> GetAll()
         {
-            return _context.UserClients
+            return await _context.UserClients
                 .Include(u => u.ImageIdFkNavigation)
                 .Include(u => u.LocationIdFkNavigation)
                 .Include(u => u.RollIdFkNavigation)
-                .ToList();
+                .ToListAsync();
         }
 
         

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetAdoptionApp.Models;
 using PetAdoptionApp.Models.DTO;
-using PetAdoptionApp.Profiles;
 using PetAdoptionApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -33,27 +32,34 @@ namespace PetAdoptionApp.Controllers
             _petService = petService;
         }
 
-        // GET ALL
+        // GET ALL RAW
         [HttpGet]
-        public async Task<IEnumerable<PetViewModel>> GetPets()
+        public async Task<PetsMetaData> GetPets()  
         {
             var pets = await _petService.GetAll();
-            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets);
-            return petDTO;
+            var petsDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets);
+            var petsMetaData = new PetsMetaData();
+            petsMetaData.pets = petsDTO;
+            petsMetaData.meta = petsDTO.Count();
+            return petsMetaData;
         }
 
         //GET ALL WITH LIMIT EXTENSION
         [HttpGet("limit")]
-        public async Task<IEnumerable<PetViewModel>> GetSomePets([FromQuery] int value)
+        public async Task<PetsMetaData> GetSomePets([FromQuery] int value)
         {
             var pets = await _petService.GetAll();
-            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Take(value);
-            return petDTO;
+            int count = pets.Count();
+            var petsDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Take(value);
+            var petsMetaData = new PetsMetaData();
+            petsMetaData.pets = petsDTO;
+            petsMetaData.meta = count;
+            return petsMetaData;
         }
 
         //GET ALL TREATMENTS AND VACINES BY PET
         [HttpGet("healthData")]
-        public async Task<List<PetTreatments>> GetPetsTreatments()
+        public async Task<List<PetTreatments>> GetPetsHeathReport()
         {
             var pets = await _petService.GetAll();
             var treatments = await _context.Treatments.ToListAsync();
@@ -91,33 +97,40 @@ namespace PetAdoptionApp.Controllers
             return petViewModel;
         }
 
-        //GET BY RAZA (BREED)
+        //GET PET BY RAZA (BREED)
         [HttpGet("search")]
-        public async Task<IEnumerable<PetViewModel>> GetPets([FromQuery]string value)
+        public async Task<PetsMetaData> GetPets([FromQuery]string value)
         {
             var pets = await _petService.GetAll();
-
-            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Breed.ToLower().Contains(value));
-            return petDTO;
+            var petsDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Breed.ToLower().Contains(value));
+            var petsMetaData = new PetsMetaData();
+            petsMetaData.pets = petsDTO;
+            petsMetaData.meta = petsDTO.Count();
+            return petsMetaData;
         }
 
-        //GET BY COLOR
+        //GET PET BY COLOR
         [HttpGet("color")]
-        public async Task<IEnumerable<PetViewModel>> GetPetsByColor([FromQuery] int value)
+        public async Task<PetsMetaData> GetPetsByColor([FromQuery] int value)
         {
             var pets = await _petService.GetAll();
-
-            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Color == value);
-            return petDTO;
+            var petsDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Color == value);
+            var petsMetaData = new PetsMetaData();
+            petsMetaData.pets = petsDTO;
+            petsMetaData.meta = petsDTO.Count();
+            return petsMetaData;
         }
 
-        //GET BY SEX (FEM/MASC)
+        //GET PET BY SEX (FEM/MASC)
         [HttpGet("sex")]
-        public async Task<IEnumerable<PetViewModel>> GetPetsBySex([FromQuery] bool value)
+        public async Task<PetsMetaData> GetPetsBySex([FromQuery] bool value)
         {
             var pets = await _petService.GetAll();
-            var petDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Sex == value);
-            return petDTO;
+            var petsDTO = _mapper.Map<IEnumerable<PetViewModel>>(pets).Where(x => x.Sex == value);
+            var petsMetaData = new PetsMetaData();
+            petsMetaData.pets = petsDTO;
+            petsMetaData.meta = petsDTO.Count();
+            return petsMetaData;
         }
 
         //Get Mascotas creadas por mes
@@ -137,7 +150,7 @@ namespace PetAdoptionApp.Controllers
             return counts;
         }
 
-        // POST: PetApi/User
+        // POST PET
         [HttpPost]
         //[Consumes(System.Net.Mime.MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -155,7 +168,7 @@ namespace PetAdoptionApp.Controllers
             }
         }
 
-        // PUT: PetApi/Pet/5
+        // PUT PET
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPet(int id, Pet pet)
         {
@@ -183,7 +196,7 @@ namespace PetAdoptionApp.Controllers
             return NoContent();
         }
 
-        // DELETE: PetApi/User/5
+        // DELETE PET
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePet(int id)
         {

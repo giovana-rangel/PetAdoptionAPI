@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using PetAdoptionApp.Models;
 using PetAdoptionApp.Models.DTO;
 using PetAdoptionApp.Services.Interfaces;
@@ -38,11 +37,14 @@ namespace PetAdoptionApp.Controllers
 
         // GET: PetApi/User
         [HttpGet]
-        public IEnumerable<UserViewModel> GetUsers()
+        public async Task<UsersMetaData> GetUsers()
         {
-            var users = _userService.GetAll();
+            var users = await _userService.GetAll();
             var usersDTO = _mapper.Map<IEnumerable<UserViewModel>>(users);
-            return usersDTO;
+            var usersMetaData = new UsersMetaData();
+            usersMetaData.Users = usersDTO;
+            usersMetaData.Entries = usersDTO.Count();
+            return usersMetaData;
         }
 
         // GET: PetApi/User/5
