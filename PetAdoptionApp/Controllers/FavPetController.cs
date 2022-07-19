@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetAdoptionApp.Models;
+using PetAdoptionApp.Models.DTO;
+using PetAdoptionApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,30 +18,66 @@ namespace PetAdoptionApp.Controllers
     public class FavPetController : ControllerBase
     {
         private readonly PetAdoptionAppContext _context;
-        public FavPetController(PetAdoptionAppContext context)
+        private readonly IMapper _mapper;
+        private readonly IPetService _petService;
+        public FavPetController
+        (
+            PetAdoptionAppContext context, 
+            IMapper mapper,
+            IPetService petService
+        )
         {
             _context = context;
+            _mapper = mapper;
+            _petService = petService;
         }
 
-        // GET ALL FAV PETS BY USER
+        // GET ALL FAV PETS 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FavPet>>> GetFavPets()
         {
             return await _context.FavPets.ToListAsync();
         }
 
-        // GET FAVPET BY USER ID
+        // GET ALL FAVPETS BY USER ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<FavPet>>> GetFavPet(int id)
+        public async Task<ActionResult<List<PetViewModel>>> GetFavPet(int id)
         {
             var favpets = await _context.FavPets.Where( x => x.UserIdFk == id).ToListAsync();
-
             if (favpets == null)
             {
                 return NotFound();
             }
 
-            return favpets;
+            var pets = new List<PetViewModel>();
+            foreach (var f in favpets)
+            {
+                int petId = f.PetIdFk;
+                var pet = await _petService.GetById(petId);
+
+                if (pet == null)
+                {
+                    return NotFound();
+                }
+
+                var petViewModel = _mapper.Map<PetViewModel>(pet);
+                pets.Add(petViewModel);
+            }
+
+            return pets;
+        }
+
+        // GET ALL FAVPETS BY USER ID VERSION LITE
+        [HttpGet("user")]
+        public async Task<ActionResult<List<int>>> GetFavs([FromQuery] int id)
+        {
+            var favs = await _context.FavPets.Where(x => x.UserIdFk == id).ToListAsync();
+            
+            if (favs == null){return NotFound();}
+
+            List<int> favoritos = new List<int>();
+            foreach(var f in favs){favoritos.Add(f.PetIdFk);}
+            return favoritos;
         }
 
         //COUNTER LIKES BY PET ID

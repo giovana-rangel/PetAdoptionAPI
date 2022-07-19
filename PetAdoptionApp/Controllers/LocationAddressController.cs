@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetAdoptionApp.Models;
+using PetAdoptionApp.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +17,11 @@ namespace PetAdoptionApp.Controllers
     public class LocationAddressController : ControllerBase
     {
         private readonly PetAdoptionAppContext _context;
-        public LocationAddressController(PetAdoptionAppContext context)
+        private readonly IMapper _mapper;
+        public LocationAddressController(PetAdoptionAppContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: PetApi/LocationAddress
@@ -29,16 +33,15 @@ namespace PetAdoptionApp.Controllers
 
         // GET PetApi/LocationAddress/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LocationAddress>> GetLocation(int id)
+        public async Task<ActionResult<LocationDTO>> GetLocation(int id)
         {
             var location = await _context.LocationAddresses.FindAsync(id);
-
             if (location == null)
             {
                 return NotFound();
             }
-
-            return location;
+            var locationDTO = _mapper.Map<LocationDTO>(location);
+            return locationDTO;
         }
 
         // POST PetApi/LocationAddress

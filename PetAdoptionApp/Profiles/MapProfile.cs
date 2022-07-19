@@ -38,7 +38,8 @@ namespace PetAdoptionApp.Profiles
                .ForMember(x => x.Street, opt => opt.MapFrom(o => o.LocationIdFkNavigation.Street))
                .ForMember(x => x.City, opt => opt.MapFrom(o => o.LocationIdFkNavigation.City))
                .ForMember(x => x.State, opt => opt.MapFrom(o => o.LocationIdFkNavigation.State))
-               .ForMember(x => x.Timestamps, opt => opt.MapFrom(o => o.Timestamps));
+               .ForMember(x => x.Country, opt => opt.MapFrom(o => o.LocationIdFkNavigation.Country))
+               .ForMember(x => x.LocationId, opt => opt.MapFrom(o => o.LocationIdFk));
 
             CreateMap<Pet, PetDates>()
                 .ForMember(x => x.Id, opt => opt.MapFrom(o => o.Id))
@@ -49,6 +50,14 @@ namespace PetAdoptionApp.Profiles
                 .ForMember(x => x.PetName, opt => opt.MapFrom(o => o.PetName))
                 .ForMember(x => x.PetType, opt => opt.MapFrom(o => o.PetTypeIdFk))
                 .ForMember(x => x.UserIdFk, opt => opt.MapFrom(o => o.UserIdFk));
+
+            CreateMap<LocationAddress, LocationDTO>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(o => o.Id))
+                .ForMember(x => x.Country, opt => opt.MapFrom(o => o.Country))
+                .ForMember(x => x.State, opt => opt.MapFrom(o => o.State))
+                .ForMember(x => x.City, opt => opt.MapFrom(o => o.City))
+                .ForMember(x => x.Street, opt => opt.MapFrom(o => o.Street))
+                .ForMember(x => x.Number, opt => opt.MapFrom(o => o.Number)); 
         }
     }
 }

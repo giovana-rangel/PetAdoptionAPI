@@ -19,10 +19,11 @@ namespace PetAdoptionApp.Models.DTO
         public virtual string PetType { get; set; }
         public virtual string Username { get; set; }
         public virtual int UserId { get; set; }
-        public virtual int Number { get; set; }
-        public virtual string Street { get; set; }
-        public virtual string City { get; set; }
+        public virtual int LocationId { get; set; }
+        public virtual string Country { get; set; }
         public virtual string State { get; set; }
-        public virtual string Timestamps { get; set; }
+        public virtual string City { get; set; }
+        public virtual string Street { get; set; }
+        public virtual int Number { get; set; }
     }
 }
