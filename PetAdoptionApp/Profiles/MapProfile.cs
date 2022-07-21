@@ -57,7 +57,8 @@ namespace PetAdoptionApp.Profiles
                 .ForMember(x => x.State, opt => opt.MapFrom(o => o.State))
                 .ForMember(x => x.City, opt => opt.MapFrom(o => o.City))
                 .ForMember(x => x.Street, opt => opt.MapFrom(o => o.Street))
-                .ForMember(x => x.Number, opt => opt.MapFrom(o => o.Number)); 
+                .ForMember(x => x.Number, opt => opt.MapFrom(o => o.Number));
+     
         }
     }
 }

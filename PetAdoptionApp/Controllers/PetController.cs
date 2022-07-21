@@ -125,31 +125,56 @@ namespace PetAdoptionApp.Controllers
 
         // POST PET
         [HttpPost]
-        //[Consumes(System.Net.Mime.MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> PostPet(Pet pet)
+        public async Task<ActionResult> PostPet(P p)
         {
             try
             {
+                LocationAddress location = new LocationAddress();
+                location.Id = 0;
+                location.Country = p.Country;
+                location.State = p.State;
+                location.City = p.City;
+                location.Street = p.Street;
+                location.Number = p.Number;
+
+                _context.LocationAddresses.Add(location);
+                await _context.SaveChangesAsync();
+
+                Pet pet = new Pet();
+                pet.LocationIdFk = location.Id;
+                pet.Id = p.Id;
+                pet.PetName = p.PetName;
+                pet.Bio = p.Bio;
+                pet.Sex = p.Sex;
+                pet.UserIdFk = p.UserIdFk;
+                pet.Age = p.Age;
+                pet.PetWeight = p.PetWeight;
+                pet.IsAdopted = p.IsAdopted;
+                pet.PetTypeIdFk = p.PetTypeIdFk;
+                pet.ColorIdFk = p.ColorIdFk;
+                pet.BreedIdFk = p.BreedIdFk;
+                pet.ImageIdFk = null;
+
                 var newPet = await _petService.CreateNew(pet);
                 return CreatedAtAction("GetPet", new { id = newPet.Id }, newPet);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return BadRequest();
             }
         }
 
         // PUT PET
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPet(int id, Pet pet)
+        [HttpPut("{locationId}")]
+        public async Task<IActionResult> PutPet(int locationId, P p)
         {
-            if (id != pet.Id)
-            {
-                return BadRequest();
-            }
+            Pet pet = setPetData(p, locationId);
+            LocationAddress location = setLocationAddress(p, locationId);
+
             _context.Entry(pet).State = EntityState.Modified;
+            _context.Entry(location).State = EntityState.Modified;
 
             try
             {
@@ -157,7 +182,7 @@ namespace PetAdoptionApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Exists(id))
+                if (!LocationExists(locationId))
                 {
                     return NotFound();
                 }
@@ -186,9 +211,47 @@ namespace PetAdoptionApp.Controllers
         }
 
         //useful methods
-        private bool Exists(int id)
+        private bool PetExists(int petId)
         {
-            return _context.Pets.Any(e => e.Id == id);
+            return _context.Pets.Any(e => e.Id == petId);
+        }
+
+        private bool LocationExists(int locationId)
+        {
+            return _context.LocationAddresses.Any(e => e.Id == locationId);
+        }
+
+        private LocationAddress setLocationAddress(P p, int locationId)
+        {
+            LocationAddress location = new LocationAddress();
+            location.Id = locationId;
+            location.Country = p.Country;
+            location.State = p.State;
+            location.City = p.City;
+            location.Street = p.Street;
+            location.Number = p.Number;
+
+            return location;
+        }
+        private Pet setPetData(P p, int locationId)
+        {
+
+            Pet pet = new Pet();
+            pet.LocationIdFk = locationId;
+            pet.Id = p.Id;
+            pet.PetName = p.PetName;
+            pet.Bio = p.Bio;
+            pet.Sex = p.Sex;
+            pet.UserIdFk = p.UserIdFk;
+            pet.Age = p.Age;
+            pet.PetWeight = p.PetWeight;
+            pet.IsAdopted = p.IsAdopted;
+            pet.PetTypeIdFk = p.PetTypeIdFk;
+            pet.ColorIdFk = p.ColorIdFk;
+            pet.BreedIdFk = p.BreedIdFk;
+            pet.ImageIdFk = null;
+
+            return pet;
         }
     }
 }
